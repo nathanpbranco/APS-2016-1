@@ -1,7 +1,11 @@
-package pct_aps;
+package pct_servidor;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.Scanner;
 
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -13,7 +17,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
-public class JFrame extends javax.swing.JFrame {
+public class Servidor extends javax.swing.JFrame {
 
 	private JPanel contentPane;
 	private JTextField textField;
@@ -29,21 +33,45 @@ public class JFrame extends javax.swing.JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					JFrame frame = new JFrame();
+					Servidor frame = new Servidor();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
+		
+		/*Sessão do console*/
+		try {
+			/*Libera uma porta para que seja possivel uma conexão*/
+			ServerSocket servidor = new ServerSocket(5000);
+			System.out.println("A porta 5000 foi aberta...");
+			/*A partir daqui, o processo é enterrompido pelo método accept().
+			 * O programa está esperando um usuario se conectar*/
+			Socket cliente = servidor.accept();
+			System.out.println("Nova conexão");
+			System.out.println("Nome: " + cliente.getInetAddress().getHostName());
+			System.out.println("IP: " + cliente.getInetAddress().getHostAddress());
+			
+			/*Recebe as informações enviadas pelo usuario*/
+			Scanner leitor = new Scanner(cliente.getInputStream());
+			while (leitor.hasNextLine()) {
+				System.out.println(leitor.nextLine());
+			}
+			
+			/*Encerra as conexões*/
+			leitor.close();
+			servidor.close();
+			cliente.close();
+			
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 	}
 
-	/**
-	 * Create the frame.
-	 */
-	public JFrame() {
-		setTitle("Janela");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	public Servidor() {
+		setTitle("Servidor");
+		setDefaultCloseOperation(Servidor.EXIT_ON_CLOSE);
 		setBounds(100, 100, 644, 472);
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -105,11 +133,11 @@ public class JFrame extends javax.swing.JFrame {
 		contentPane.add(textArea);
 		
 		JButton btnEnviar = new JButton("Enviar");
-		btnEnviar.setBounds(10, 381, 63, 23);
+		btnEnviar.setBounds(10, 380, 77, 23);
 		contentPane.add(btnEnviar);
 		
 		textField_4 = new JTextField();
-		textField_4.setBounds(83, 381, 535, 20);
+		textField_4.setBounds(97, 381, 521, 20);
 		contentPane.add(textField_4);
 		textField_4.setColumns(10);
 	}
