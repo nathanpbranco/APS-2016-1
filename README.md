@@ -1,8 +1,7 @@
-* APS-2016-1
+# APS-2016-1
 
-** Objetivo
-	Software que faça uma troca de mensagens entre maquinas dentro de uma rede.
+## Propósito
+	Projeto semestral do curso de Ciencias da Computação
 
-** Propósito
-	Trabalho semestral (APS);
-	Estudos à parte.
+## Tema
+	Desenvolver um software capaz de realizar uma troca de mensagens entre dois computadores.
