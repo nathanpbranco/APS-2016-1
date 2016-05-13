@@ -1,35 +1,43 @@
 package pct_servidor;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.io.StringWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.Caret;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
-import javax.swing.JButton;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.InputMethodListener;
+import java.awt.event.InputMethodEvent;
 
 public class Servidor extends javax.swing.JFrame {
+
+	private static final long serialVersionUID = 1L;
 	
 	/*Sessão de objetos globais*/
 
-	private JPanel contentPane;
-	private JTextField tfNome;
-	private JTextField tfIP;
+	private static JPanel contentPane;
+	private static JTextField tfNome;
+	private static JTextField tfIP;
 	
 	static ServerSocket servidor;
-	static Scanner leitor;
 	static Socket cliente;
+	static Scanner leitor;
 
 	/**
 	 * Launch the application.
@@ -40,6 +48,7 @@ public class Servidor extends javax.swing.JFrame {
 				try {
 					Servidor frame = new Servidor();
 					frame.setVisible(true);
+					frame.setLocationRelativeTo(null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -51,25 +60,29 @@ public class Servidor extends javax.swing.JFrame {
 		try {
 			/*Libera uma porta para que seja possivel uma conexão*/
 			servidor = new ServerSocket(5000);
-			System.out.println("A porta 5000 foi aberta...");
+			System.out.println("A porta 5000 foi aberta. \nAguardando conexão...");
+			JOptionPane.showMessageDialog(null, "A porta 5000 foi aberta.\nAguardando conexão do usuário.");
 			
 			/*A partir daqui, o processo é enterrompido pelo método accept().
 			 * O programa está esperando um usuario se conectar*/
 			cliente = servidor.accept();
 			System.out.println("Nova conexão");
-			System.out.println("Nome: " + cliente.getInetAddress().getHostName());
+			System.out.println("Nome: " + cliente.getInetAddress().getLocalHost().getHostName());
 			System.out.println("IP: " + cliente.getInetAddress().getHostAddress());
+			
+			tfNome.setText(cliente.getInetAddress().getLocalHost().getHostName());
+			tfIP.setText(cliente.getInetAddress().getHostAddress());
 			
 			/*Recebe as informações enviadas pelo usuario*/
 			leitor = new Scanner(cliente.getInputStream());
 			while (leitor.hasNextLine()) {
-				System.out.println(leitor.nextLine());
+				System.out.println(cliente.getInetAddress().getHostName() + ": " + leitor.nextLine());
+				JOptionPane.showMessageDialog(null, "Acabou de chegar um novo aviso !\n Enviada por " + cliente.getInetAddress().getLocalHost() + ".\n Confira no console.");
 			}
 			
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
-			
 	}
 
 	public Servidor() {
@@ -118,6 +131,7 @@ public class Servidor extends javax.swing.JFrame {
 		taChat.setLineWrap(true);
 		taChat.setBounds(10, 85, 608, 269);
 		contentPane.add(taChat);
+		taChat.setText("Mensagens aparecerão aqui...");
 		
 		/*Sessão de Action Handlers*/
 		

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Date;
 import java.util.Scanner;
 
 import javax.swing.JFrame;
@@ -18,11 +19,15 @@ import javax.swing.JTextField;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 public class Cliente extends JFrame {
 
+	private static final long serialVersionUID = 1L;
+	
 	/*Sessão de objetos globais*/
 	
 	private JPanel contentPane;
@@ -31,6 +36,8 @@ public class Cliente extends JFrame {
 	static Socket cliente;
 	static PrintStream saída;
 	static Scanner leitor;
+	
+	JLabel lblStatus = new JLabel("Status:");
 	
 	/**
 	 * Launch the application.
@@ -41,6 +48,7 @@ public class Cliente extends JFrame {
 				try {
 					Cliente frame = new Cliente();
 					frame.setVisible(true);
+					frame.setLocationRelativeTo(null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -48,10 +56,12 @@ public class Cliente extends JFrame {
 		});
 		
 		/*Sessão do console*/
+		
 		try {
 			/*Conecta com o servidor*/
-			cliente = new Socket("192.168.25.194", 5001);
+			cliente = new Socket("192.168.56.1", 5000);
 			System.out.println("Conectado ao servidor!");
+			JOptionPane.showMessageDialog(null, "Conectado com o servidor !");
 			
 			/*Lê e envia os dados do cliente para o servidor*/
 			saída = new PrintStream(cliente.getOutputStream());
@@ -69,6 +79,8 @@ public class Cliente extends JFrame {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Não foi possivel realizar a conexão com o servidor.\nVerifique se o servidor está conectado ou se o IP escolhido está correto.");
+			System.out.println("Não foi possivel realizar a conexão com o servidor.\nVerifique se o servidor está conectado ou se o IP escolhido está correto.");
 		}
 	}
 
@@ -78,7 +90,7 @@ public class Cliente extends JFrame {
 	public Cliente() {
 		setTitle("Cliente");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 542, 359);
+		setBounds(100, 100, 542, 379);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -93,11 +105,10 @@ public class Cliente extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblStatus = new JLabel("Status:");
 		lblStatus.setBounds(10, 11, 184, 14);
 		contentPane.add(lblStatus);
 		
-		JTextArea taChat = new JTextArea();
+		final JTextArea taChat = new JTextArea();
 		taChat.setBounds(10, 36, 506, 241);
 		contentPane.add(taChat);
 		
@@ -121,6 +132,15 @@ public class Cliente extends JFrame {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+			}
+		});
+		
+		btnEnviar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				saída.println(tfChat.getText());
+				taChat.append("Você: " + tfChat.getText() + "\n");
+				taChat.append("(Enviada às " + (new Date()) + ")\n");
+				taChat.append("------------------------------------------------------------------------------------------------------------------\n");
 			}
 		});
 	}
