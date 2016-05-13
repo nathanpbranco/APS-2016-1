@@ -31,11 +31,9 @@ public class Cliente extends JFrame {
 	/*Sessão de objetos globais*/
 	
 	private JPanel contentPane;
-	private JTextField tfChat;
+	public JTextField tfChat;
 	
-	static Socket cliente;
-	static PrintStream saída;
-	static Scanner leitor;
+	static Funcoes funcao = new Funcoes();
 	
 	JLabel lblStatus = new JLabel("Status:");
 	
@@ -56,32 +54,17 @@ public class Cliente extends JFrame {
 		});
 		
 		/*Sessão do console*/
-		
-		try {
+			
 			/*Conecta com o servidor*/
-			cliente = new Socket("192.168.56.1", 5000);
+			funcao.setIP(); //Precisa ser implementado.
+			funcao.setGateway(); //Precisa ser Implementado.
+			funcao.conectar();
 			System.out.println("Conectado ao servidor!");
 			JOptionPane.showMessageDialog(null, "Conectado com o servidor !");
 			
 			/*Lê e envia os dados do cliente para o servidor*/
-			saída = new PrintStream(cliente.getOutputStream());
-			leitor = new Scanner(System.in);
-			while (leitor.hasNextLine()) {
-				saída.println(leitor.nextLine());
-			}
+			funcao.enviarMensagemViaConsole();
 			
-			/*Termina a conexão*/
-			saída.close();
-			leitor.close();
-			cliente.close();
-			
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Não foi possivel realizar a conexão com o servidor.\nVerifique se o servidor está conectado ou se o IP escolhido está correto.");
-			System.out.println("Não foi possivel realizar a conexão com o servidor.\nVerifique se o servidor está conectado ou se o IP escolhido está correto.");
-		}
 	}
 
 	/**
@@ -125,19 +108,14 @@ public class Cliente extends JFrame {
 		
 		mntmSair.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				try {
-					cliente.close();
-					saída.close();
-					leitor.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				/*Termina a conexão*/
+				funcao.encerrar();
 			}
 		});
 		
 		btnEnviar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				saída.println(tfChat.getText());
+				funcao.enviarMensagemViaTextField(tfChat.getText());
 				taChat.append("Você: " + tfChat.getText() + "\n");
 				taChat.append("(Enviada às " + (new Date()) + ")\n");
 				taChat.append("------------------------------------------------------------------------------------------------------------------\n");
