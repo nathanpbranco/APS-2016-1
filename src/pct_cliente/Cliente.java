@@ -1,13 +1,7 @@
 package pct_cliente;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Date;
-import java.util.Scanner;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -36,6 +30,8 @@ public class Cliente extends JFrame {
 	static Funcoes funcao = new Funcoes();
 	
 	JLabel lblStatus = new JLabel("Status:");
+	private JTextField tfGateway;
+	private JTextField tfIP;
 	
 	/**
 	 * Launch the application.
@@ -52,19 +48,6 @@ public class Cliente extends JFrame {
 				}
 			}
 		});
-		
-		/*Sessão do console*/
-			
-			/*Conecta com o servidor*/
-			funcao.setIP(); //Precisa ser implementado.
-			funcao.setGateway(); //Precisa ser Implementado.
-			funcao.conectar();
-			System.out.println("Conectado ao servidor!");
-			JOptionPane.showMessageDialog(null, "Conectado com o servidor !");
-			
-			/*Lê e envia os dados do cliente para o servidor*/
-			funcao.enviarMensagemViaConsole();
-			
 	}
 
 	/**
@@ -73,7 +56,7 @@ public class Cliente extends JFrame {
 	public Cliente() {
 		setTitle("Cliente");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 542, 379);
+		setBounds(100, 100, 542, 495);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -88,23 +71,52 @@ public class Cliente extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		lblStatus.setBounds(10, 11, 184, 14);
+		lblStatus.setBounds(10, 124, 184, 14);
 		contentPane.add(lblStatus);
 		
 		final JTextArea taChat = new JTextArea();
-		taChat.setBounds(10, 36, 506, 241);
+		taChat.setBounds(10, 149, 506, 241);
 		contentPane.add(taChat);
 		
-		JButton btnEnviar = new JButton("Enviar");
-		btnEnviar.setBounds(10, 287, 89, 23);
+		final JButton btnEnviar = new JButton("Enviar");
+		btnEnviar.setBounds(10, 401, 89, 23);
 		contentPane.add(btnEnviar);
+		btnEnviar.setEnabled(false);
 		
 		tfChat = new JTextField();
-		tfChat.setBounds(109, 288, 407, 20);
+		tfChat.setBounds(109, 402, 407, 20);
 		contentPane.add(tfChat);
 		tfChat.setColumns(10);
 		
-		/*Sessão de Action Handlers*/
+		JLabel lblIP = new JLabel("IP:");
+		lblIP.setBounds(10, 11, 46, 14);
+		contentPane.add(lblIP);
+		
+		JLabel lblGateway = new JLabel("Gateway:");
+		lblGateway.setBounds(10, 36, 70, 14);
+		contentPane.add(lblGateway);
+		
+		tfGateway = new JTextField();
+		tfGateway.setBounds(90, 33, 86, 20);
+		contentPane.add(tfGateway);
+		tfGateway.setColumns(10);
+		tfGateway.setText(String.valueOf(5000));
+		
+		tfIP = new JTextField();
+		tfIP.setBounds(90, 8, 86, 20);
+		contentPane.add(tfIP);
+		tfIP.setColumns(10);
+		tfIP.setText("192.168.56.1");
+		
+		final JButton btnConectar = new JButton("Conectar");
+		btnConectar.setBounds(186, 7, 89, 47);
+		contentPane.add(btnConectar);
+		
+		final JButton btnDesconectar = new JButton("Desconectar");
+		btnDesconectar.setBounds(285, 7, 93, 46);
+		contentPane.add(btnDesconectar);
+		
+		//<INICIO> Action Handlers
 		
 		mntmSair.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -119,6 +131,32 @@ public class Cliente extends JFrame {
 				taChat.append("Você: " + tfChat.getText() + "\n");
 				taChat.append("(Enviada às " + (new Date()) + ")\n");
 				taChat.append("------------------------------------------------------------------------------------------------------------------\n");
+			}
+		});
+		
+		btnConectar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				funcao.setIP(tfIP.getText());
+				funcao.setGateway(Integer.parseInt(tfGateway.getText()));
+				funcao.conectar();
+				lblStatus.setText("Status: Conectado");
+				btnDesconectar.setEnabled(true);
+				btnConectar.setEnabled(false);
+				btnEnviar.setEnabled(true);
+				tfIP.setEnabled(false);
+				tfGateway.setEnabled(false);
+				
+			}
+		});
+		
+		btnDesconectar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				funcao.desconectar();
+				btnDesconectar.setEnabled(false);
+				btnConectar.setEnabled(true);
+				btnEnviar.setEnabled(false);
+				tfIP.setEnabled(true);
+				tfGateway.setEnabled(true);
 			}
 		});
 	}

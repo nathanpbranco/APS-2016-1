@@ -1,17 +1,13 @@
 package pct_servidor;
 
 import java.awt.EventQueue;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.io.StringWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-import javax.swing.text.Caret;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JTextArea;
@@ -22,8 +18,6 @@ import javax.swing.JOptionPane;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.InputMethodListener;
-import java.awt.event.InputMethodEvent;
 
 public class Servidor extends javax.swing.JFrame {
 
@@ -77,7 +71,7 @@ public class Servidor extends javax.swing.JFrame {
 			leitor = new Scanner(cliente.getInputStream());
 			while (leitor.hasNextLine()) {
 				System.out.println(cliente.getInetAddress().getHostName() + ": " + leitor.nextLine());
-				JOptionPane.showMessageDialog(null, "Acabou de chegar um novo aviso !\n Enviada por " + cliente.getInetAddress().getLocalHost() + ".\n Confira no console.");
+				JOptionPane.showMessageDialog(null, "Acabou de chegar um novo aviso !\n Enviada por " + cliente.getInetAddress().getLocalHost() + "\n Confira no console.");
 			}
 			
 		} catch (IOException e1) {
