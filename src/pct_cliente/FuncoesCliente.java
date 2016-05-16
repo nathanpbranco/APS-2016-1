@@ -6,14 +6,13 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-import javax.print.DocFlavor.STRING;
 import javax.swing.JOptionPane;
 
-public class Funcoes extends Cliente{
+public class FuncoesCliente extends Cliente{
 	
 	private static final long serialVersionUID = 1L;
 
-	public Funcoes() {
+	public FuncoesCliente() {
 	}
 	
 	//<INICIO> Variáveis globais

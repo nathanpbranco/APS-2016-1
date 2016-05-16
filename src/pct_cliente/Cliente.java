@@ -13,7 +13,6 @@ import javax.swing.JTextField;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -27,7 +26,7 @@ public class Cliente extends JFrame {
 	private JPanel contentPane;
 	public JTextField tfChat;
 	
-	static Funcoes funcao = new Funcoes();
+	static FuncoesCliente funcao = new FuncoesCliente();
 	
 	JLabel lblStatus = new JLabel("Status:");
 	private JTextField tfGateway;
@@ -56,7 +55,7 @@ public class Cliente extends JFrame {
 	public Cliente() {
 		setTitle("Cliente");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 542, 495);
+		setBounds(100, 100, 542, 430);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -71,20 +70,20 @@ public class Cliente extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		lblStatus.setBounds(10, 124, 184, 14);
+		lblStatus.setBounds(10, 61, 184, 14);
 		contentPane.add(lblStatus);
 		
 		final JTextArea taChat = new JTextArea();
-		taChat.setBounds(10, 149, 506, 241);
+		taChat.setBounds(10, 86, 506, 241);
 		contentPane.add(taChat);
 		
 		final JButton btnEnviar = new JButton("Enviar");
-		btnEnviar.setBounds(10, 401, 89, 23);
+		btnEnviar.setBounds(10, 338, 89, 23);
 		contentPane.add(btnEnviar);
 		btnEnviar.setEnabled(false);
 		
 		tfChat = new JTextField();
-		tfChat.setBounds(109, 402, 407, 20);
+		tfChat.setBounds(109, 339, 407, 20);
 		contentPane.add(tfChat);
 		tfChat.setColumns(10);
 		
@@ -115,6 +114,7 @@ public class Cliente extends JFrame {
 		final JButton btnDesconectar = new JButton("Desconectar");
 		btnDesconectar.setBounds(285, 7, 93, 46);
 		contentPane.add(btnDesconectar);
+		btnDesconectar.setEnabled(false);
 		
 		//<INICIO> Action Handlers
 		

@@ -1,10 +1,6 @@
 package pct_servidor;
 
 import java.awt.EventQueue;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Scanner;
 
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -14,7 +10,6 @@ import javax.swing.JTextArea;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -29,9 +24,7 @@ public class Servidor extends javax.swing.JFrame {
 	private static JTextField tfNome;
 	private static JTextField tfIP;
 	
-	static ServerSocket servidor;
-	static Socket cliente;
-	static Scanner leitor;
+	static FuncoesServidor funcao = new FuncoesServidor();
 
 	/**
 	 * Launch the application.
@@ -51,32 +44,18 @@ public class Servidor extends javax.swing.JFrame {
 		
 		/*Sessão do console*/
 		
-		try {
 			/*Libera uma porta para que seja possivel uma conexão*/
-			servidor = new ServerSocket(5000);
-			System.out.println("A porta 5000 foi aberta. \nAguardando conexão...");
-			JOptionPane.showMessageDialog(null, "A porta 5000 foi aberta.\nAguardando conexão do usuário.");
+			funcao.openGateway();
 			
 			/*A partir daqui, o processo é enterrompido pelo método accept().
 			 * O programa está esperando um usuario se conectar*/
-			cliente = servidor.accept();
-			System.out.println("Nova conexão");
-			System.out.println("Nome: " + cliente.getInetAddress().getLocalHost().getHostName());
-			System.out.println("IP: " + cliente.getInetAddress().getHostAddress());
+			funcao.listenConnection();
 			
-			tfNome.setText(cliente.getInetAddress().getLocalHost().getHostName());
-			tfIP.setText(cliente.getInetAddress().getHostAddress());
+			tfNome.setText(funcao.getHostName());
+			tfIP.setText(funcao.getHostIp());
 			
 			/*Recebe as informações enviadas pelo usuario*/
-			leitor = new Scanner(cliente.getInputStream());
-			while (leitor.hasNextLine()) {
-				System.out.println(cliente.getInetAddress().getHostName() + ": " + leitor.nextLine());
-				JOptionPane.showMessageDialog(null, "Acabou de chegar um novo aviso !\n Enviada por " + cliente.getInetAddress().getLocalHost() + "\n Confira no console.");
-			}
-			
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+			funcao.receveMessageOnConsole();
 	}
 
 	public Servidor() {
@@ -132,14 +111,7 @@ public class Servidor extends javax.swing.JFrame {
 		mntmSair.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				/*Encerra as conexões*/
-				try {
-					leitor.close();
-					servidor.close();
-					cliente.close();
-					System.exit(0);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				funcao.exit();
 			}
 		});
 	}
