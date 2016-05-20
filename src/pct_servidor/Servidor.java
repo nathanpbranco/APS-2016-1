@@ -12,6 +12,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.awt.event.ActionEvent;
 
 public class Servidor extends javax.swing.JFrame {
@@ -23,13 +24,15 @@ public class Servidor extends javax.swing.JFrame {
 	private static JPanel contentPane;
 	private static JTextField tfNome;
 	private static JTextField tfIP;
+	private static JTextArea taChat;
 	
 	static FuncoesServidor funcao = new FuncoesServidor();
 
 	/**
 	 * Launch the application.
+	 * @throws IOException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -44,21 +47,25 @@ public class Servidor extends javax.swing.JFrame {
 		
 		/*Sessão do console*/
 		
-			/*Libera uma porta para que seja possivel uma conexão*/
-			funcao.openGateway();
-			
-			/*A partir daqui, o processo é enterrompido pelo método accept().
-			 * O programa está esperando um usuario se conectar*/
-			funcao.listenConnection();
-			
-			tfNome.setText(funcao.getHostName());
-			tfIP.setText(funcao.getHostIp());
-			
-			/*Recebe as informações enviadas pelo usuario*/
-			funcao.receveMessageOnConsole();
+		/*Libera uma porta para que seja possivel uma conexão*/
+		funcao.openGateway();
+		
+		/*A partir daqui, o processo é enterrompido pelo método accept().
+		 * O programa está esperando um usuario se conectar*/
+		funcao.listenConnection();
+		
+		tfNome.setText(funcao.getHostName());
+		tfIP.setText(funcao.getHostIp());
+		
+		/*Mensagens do chat serão processadas abaixo*/
+		taChat.append("Novas mensagens aparecerão aqui...\n");
+		boolean infiniteLoop = true;
+		while (infiniteLoop == true) {
+			taChat.append(funcao.getHostName() + ": " + funcao.receveMessage() + "\n");
+		}
 	}
 
-	public Servidor() {
+	public Servidor() { // Objetos gerados pelo swing
 		setTitle("Servidor");
 		setDefaultCloseOperation(Servidor.EXIT_ON_CLOSE);
 		setBounds(100, 100, 644, 428);
@@ -100,19 +107,19 @@ public class Servidor extends javax.swing.JFrame {
 		lblConectadoCom.setBounds(10, 11, 113, 14);
 		contentPane.add(lblConectadoCom);
 		
-		JTextArea taChat = new JTextArea();
-		taChat.setLineWrap(true);
-		taChat.setBounds(10, 85, 608, 269);
+		taChat = new JTextArea();
+		taChat.setBounds(10, 85, 608, 272);
 		contentPane.add(taChat);
-		taChat.setText("Mensagens aparecerão aqui...");
-		
-		/*Sessão de Action Handlers*/
+
+		//<INICIO> Action Handlers
 		
 		mntmSair.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				/*Encerra as conexões*/
+				/*Encerra as conexões e o programa*/
 				funcao.exit();
 			}
 		});
+		
+		//<FIM> Action Handlers
 	}
 }

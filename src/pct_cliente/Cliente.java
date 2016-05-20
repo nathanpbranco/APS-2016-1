@@ -15,6 +15,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.awt.event.ActionEvent;
 
 public class Cliente extends JFrame {
@@ -35,7 +36,7 @@ public class Cliente extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -47,6 +48,8 @@ public class Cliente extends JFrame {
 				}
 			}
 		});
+		funcao.connect();
+		funcao.sendMessageByConsole();
 	}
 
 	/**
@@ -72,6 +75,7 @@ public class Cliente extends JFrame {
 		
 		lblStatus.setBounds(10, 61, 184, 14);
 		contentPane.add(lblStatus);
+		lblStatus.setText("Status: Conectado");
 		
 		final JTextArea taChat = new JTextArea();
 		taChat.setBounds(10, 86, 506, 241);
@@ -80,7 +84,7 @@ public class Cliente extends JFrame {
 		final JButton btnEnviar = new JButton("Enviar");
 		btnEnviar.setBounds(10, 338, 89, 23);
 		contentPane.add(btnEnviar);
-		btnEnviar.setEnabled(false);
+		btnEnviar.setEnabled(true);
 		
 		tfChat = new JTextField();
 		tfChat.setBounds(109, 339, 407, 20);
@@ -92,45 +96,52 @@ public class Cliente extends JFrame {
 		contentPane.add(lblIP);
 		
 		JLabel lblGateway = new JLabel("Gateway:");
-		lblGateway.setBounds(10, 36, 70, 14);
+		lblGateway.setBounds(10, 33, 70, 14);
 		contentPane.add(lblGateway);
 		
 		tfGateway = new JTextField();
-		tfGateway.setBounds(90, 33, 86, 20);
+		tfGateway.setBounds(90, 30, 86, 20);
 		contentPane.add(tfGateway);
 		tfGateway.setColumns(10);
 		tfGateway.setText(String.valueOf(5000));
+		tfGateway.setEnabled(false);
 		
 		tfIP = new JTextField();
 		tfIP.setBounds(90, 8, 86, 20);
 		contentPane.add(tfIP);
 		tfIP.setColumns(10);
 		tfIP.setText("192.168.56.1");
+		tfIP.setEnabled(false);
 		
 		final JButton btnConectar = new JButton("Conectar");
-		btnConectar.setBounds(186, 7, 89, 47);
+		btnConectar.setBounds(186, 11, 122, 39);
 		contentPane.add(btnConectar);
+		btnConectar.setEnabled(false);
 		
 		final JButton btnDesconectar = new JButton("Desconectar");
-		btnDesconectar.setBounds(285, 7, 93, 46);
+		btnDesconectar.setBounds(318, 11, 122, 39);
 		contentPane.add(btnDesconectar);
-		btnDesconectar.setEnabled(false);
+		btnDesconectar.setEnabled(true);
 		
 		//<INICIO> Action Handlers
 		
 		mntmSair.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				/*Termina a conexão*/
-				funcao.encerrar();
+				funcao.exit();
 			}
 		});
 		
 		btnEnviar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				funcao.enviarMensagemViaTextField(tfChat.getText());
+				funcao.sendMessageByTextField(tfChat.getText());
 				taChat.append("Você: " + tfChat.getText() + "\n");
 				taChat.append("(Enviada às " + (new Date()) + ")\n");
 				taChat.append("------------------------------------------------------------------------------------------------------------------\n");
+				System.out.println("Você: " + tfChat.getText());
+				System.out.println("(Enviada às " + (new Date()) + ")");
+				System.out.println("------------------------------------------------------------------------------------------------------------------");
+				tfChat.setText("");
 			}
 		});
 		
@@ -138,7 +149,7 @@ public class Cliente extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				funcao.setIP(tfIP.getText());
 				funcao.setGateway(Integer.parseInt(tfGateway.getText()));
-				funcao.conectar();
+				funcao.connect();
 				lblStatus.setText("Status: Conectado");
 				btnDesconectar.setEnabled(true);
 				btnConectar.setEnabled(false);
@@ -151,10 +162,11 @@ public class Cliente extends JFrame {
 		
 		btnDesconectar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				funcao.desconectar();
+				funcao.desconnect();
 				btnDesconectar.setEnabled(false);
 				btnConectar.setEnabled(true);
 				btnEnviar.setEnabled(false);
+				lblStatus.setText("Status: Desconectado");
 				tfIP.setEnabled(true);
 				tfGateway.setEnabled(true);
 			}
