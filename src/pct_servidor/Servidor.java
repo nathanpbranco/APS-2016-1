@@ -10,28 +10,37 @@ import javax.swing.JTextArea;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.Date;
 import java.awt.event.ActionEvent;
+import javax.swing.JButton;
 
 public class Servidor extends javax.swing.JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
-	/*Sessão de objetos globais*/
-
-	private static JPanel contentPane;
-	private static JTextField tfNome;
-	private static JTextField tfIP;
-	private static JTextArea taChat;
+    static JPanel contentPane;
+	static JTextField tfNome;
+	static JTextField tfIP;
+	static JTextArea taChat;
+	static JTextField tfChat;
+	static JMenuBar menuBar;
+	static JMenu mnArquivo;
+	static JMenuItem mntmSair;
+	static JLabel lblNome;
+	static JLabel lblIP;
+	static JLabel lblNotificacao;
+	static JButton btnEnviar;
 	
 	static FuncoesServidor funcao = new FuncoesServidor();
 
 	/**
-	 * Launch the application.
 	 * @throws IOException 
 	 */
+	
 	public static void main(String[] args) throws IOException {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -54,36 +63,43 @@ public class Servidor extends javax.swing.JFrame {
 		 * O programa está esperando um usuario se conectar*/
 		funcao.listenConnection();
 		
+		lblNotificacao.setText("Conectado com...");
 		tfNome.setText(funcao.getHostName());
 		tfIP.setText(funcao.getHostIp());
+		tfChat.setEditable(true);
+		btnEnviar.setEnabled(true);
+		
+		funcao.enviarTeste();
 		
 		/*Mensagens do chat serão processadas abaixo*/
-		taChat.append("Novas mensagens aparecerão aqui...\n");
+		taChat.append("Mensagens aparecerão aqui...\n");
+		taChat.append("-------------------------------------------------------\n");
 		boolean infiniteLoop = true;
 		while (infiniteLoop == true) {
 			taChat.append(funcao.getHostName() + ": " + funcao.receveMessage() + "\n");
+			taChat.append("-------------------------------------------------------\n");
 		}
 	}
 
-	public Servidor() { // Objetos gerados pelo swing
+	public Servidor() { 
 		setTitle("Servidor");
 		setDefaultCloseOperation(Servidor.EXIT_ON_CLOSE);
-		setBounds(100, 100, 644, 428);
+		setBounds(100, 100, 370, 600);
 		
-		JMenuBar menuBar = new JMenuBar();
+		menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
-		JMenu mnArquivo = new JMenu("Arquivo");
+		mnArquivo = new JMenu("Arquivo");
 		menuBar.add(mnArquivo);
 		
-		JMenuItem mntmSair = new JMenuItem("Sair");
+		mntmSair = new JMenuItem("Sair");
 		mnArquivo.add(mntmSair);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel lblNome = new JLabel("Nome:");
+		lblNome = new JLabel("Nome:");
 		lblNome.setBounds(10, 35, 46, 14);
 		contentPane.add(lblNome);
 		
@@ -93,7 +109,7 @@ public class Servidor extends javax.swing.JFrame {
 		contentPane.add(tfNome);
 		tfNome.setColumns(10);
 		
-		JLabel lblIP = new JLabel("IP:");
+		lblIP = new JLabel("IP:");
 		lblIP.setBounds(10, 60, 46, 14);
 		contentPane.add(lblIP);
 		
@@ -103,23 +119,53 @@ public class Servidor extends javax.swing.JFrame {
 		contentPane.add(tfIP);
 		tfIP.setColumns(10);
 		
-		JLabel lblConectadoCom = new JLabel("Conectado com...");
-		lblConectadoCom.setBounds(10, 11, 113, 14);
-		contentPane.add(lblConectadoCom);
+		lblNotificacao = new JLabel("Aguardando usuário...");
+		lblNotificacao.setBounds(10, 11, 163, 14);
+		contentPane.add(lblNotificacao);
 		
 		taChat = new JTextArea();
-		taChat.setBounds(10, 85, 608, 272);
+		taChat.setBounds(10, 85, 334, 413);
 		contentPane.add(taChat);
-
-		//<INICIO> Action Handlers
+		taChat.setEditable(false);
 		
+		tfChat = new JTextField();
+		tfChat.setBounds(10, 509, 278, 20);
+		contentPane.add(tfChat);
+		tfChat.setColumns(10);
+		tfChat.setEditable(false);
+		
+		btnEnviar = new JButton(">");
+		btnEnviar.setBounds(298, 508, 46, 23);
+		contentPane.add(btnEnviar);
+		btnEnviar.setEnabled(false);
+
 		mntmSair.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				/*Encerra as conexões e o programa*/
-				funcao.exit();
+				try {
+					funcao.exit();
+				} catch (IOException e) {
+					JOptionPane.showMessageDialog(null, "Ocorreu um erro ao finalizar a aplicação.\nForçando o encerramento agora...");
+					e.printStackTrace();
+					System.exit(0);
+				}
 			}
 		});
 		
-		//<FIM> Action Handlers
+		btnEnviar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				try {
+					funcao.sendTextMessage(tfChat.getText());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				taChat.append("Você: " + tfChat.getText() + "\n");
+				taChat.append("(Enviada às " + (new Date()) + ")\n");
+				taChat.append("------------------------------------------------------------------------------------------------------------------\n");
+				System.out.println("Você: " + tfChat.getText());
+				System.out.println("(Enviada às " + (new Date()) + ")");
+				System.out.println("------------------------------------------------------------------------------------------------------------------");
+				tfChat.setText("");
+			}
+		});
 	}
 }

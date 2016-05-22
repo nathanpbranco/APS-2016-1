@@ -1,13 +1,10 @@
 package pct_cliente;
 
-import java.awt.Toolkit;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.JOptionPane;
 
@@ -15,57 +12,31 @@ public class FuncoesCliente extends Cliente{
 	
 	private static final long serialVersionUID = 1L;
 	
-	//<INICIO> Objetos globais
+	Socket cliente;
+	PrintStream saida;
+	Scanner leitor;
+	Scanner leitorInput;
+	
+	String msg = null;
+	String IP = "192.168.56.1";
+	int gateway = 5000;
+	boolean conectionStatus = false;
 		
-		Socket cliente;
-		PrintStream saida;
-		Scanner leitor;
-		
-		//<Fim> Objetos globais
-
 	public FuncoesCliente() {
 		leitor = new Scanner(System.in);
 	}
 	
-	//<INICIO> Variáveis globais
-	
-	int gateway = 5000;
-	String IP = "192.168.56.1";
-	
-	//<FIM> Variáveis globais
-	
-	
-	//<INICIO> Funções
-
-	public void connect() {
-		try {
-			cliente = new Socket(IP, gateway);
-			System.out.println("Conectado ao servidor!");
-			JOptionPane.showMessageDialog(null, "Conectado com o servidor !");
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Não foi possivel realizar a conexão com o servidor.\nVerifique se o servidor está conectado ou se o IP escolhido está correto.");
-			System.out.println("Não foi possivel realizar a conexão com o servidor.\nVerifique se o servidor está conectado ou se o IP escolhido está correto.");
-			System.exit(0);
-		}
+	public void connect() throws UnknownHostException, IOException {
+		cliente = new Socket(IP, gateway);
+		System.out.println("Conectado ao servidor!");
+		JOptionPane.showMessageDialog(null, "Conectado com o servidor !");
 	}
 	
-	public void desconnect() {
-		try {
+	public void desconnect() throws IOException {
 			cliente.close();
 			JOptionPane.showMessageDialog(null, "Você se desconectou.");
 			System.out.println("Conexão encerrada.");
-		} catch (IOException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, "Ocorreu um erro ao desconectar.");
-		}
 	}
-	
-	public void heartbeat() {
-		
-	}	
 	
 	public String getIP() {
 		return String.valueOf(IP);
@@ -76,16 +47,7 @@ public class FuncoesCliente extends Cliente{
 		return IP;
 	}
 	
-	public String getGateway() {
-		return String.valueOf(gateway);
-	}
-	
-	public void setGateway(int _tfGateway) {
-		gateway = _tfGateway;
-	}
-
-	public void sendMessageByConsole() {
-		boolean conectionStatus = false;
+	public void sendMessageByConsole() throws IOException {
 		do {
 			if (cliente != null) {
 				conectionStatus = true;
@@ -94,36 +56,51 @@ public class FuncoesCliente extends Cliente{
 			}
 		} while (conectionStatus == false);
 		
-		try {
 			saida = new PrintStream(cliente.getOutputStream());
 			while (leitor.hasNextLine()) {
 				saida.println(leitor.nextLine());
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
-	public void sendMessageByTextField(String _tfChat) {
-		try {
-			saida = new PrintStream(cliente.getOutputStream());
-			saida.println(_tfChat);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public void sendTextMessage(String _tfChat) throws IOException {
+		saida = new PrintStream(cliente.getOutputStream());
+		saida.println(_tfChat);
 	}
 	
-	public void exit() {
-		try {
-			saida.close();
-			leitor.close();
-			cliente.close();
-			System.exit(0);
-		} catch (IOException e) {
-			e.printStackTrace();
+	public String receveTextMessage() throws IOException {
+		do {
+			System.out.println("Aguardando conexão...\n"); //REMOVER
+			if (cliente != null) {
+				conectionStatus = true;
+			} else {
+				conectionStatus = false;
+			}
+		} while (conectionStatus == false);
+		
+		leitorInput = new Scanner(cliente.getInputStream());
+		while (leitorInput.hasNextLine()) {
+			msg = leitorInput.nextLine();
+			System.out.println("Servidor: " + msg);
+			return msg;
 		}
+		return null;
+	}
+	
+	public void exit() throws IOException {
+		saida.close();
+		leitor.close();
+		leitorInput.close();
+		cliente.close();
+		System.exit(0);
 	}
 
-	//<Fim> Funções
-
+	public void waitConnection() {
+		do {
+			if (cliente != null) {
+				conectionStatus = true;
+			} else {
+				conectionStatus = false;
+			}
+		} while (conectionStatus == false);
+	}
 }
