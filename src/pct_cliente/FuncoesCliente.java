@@ -26,47 +26,6 @@ public class FuncoesCliente extends Cliente{
 		leitor = new Scanner(System.in);
 	}
 	
-	public void connect() throws UnknownHostException, IOException {
-		cliente = new Socket(IP, gateway);
-		System.out.println("Conectado ao servidor!");
-		JOptionPane.showMessageDialog(null, "Conectado com o servidor !");
-	}
-	
-	public void desconnect() throws IOException {
-			cliente.close();
-			JOptionPane.showMessageDialog(null, "Você se desconectou.");
-			System.out.println("Conexão encerrada.");
-	}
-	
-	public String getIP() {
-		return String.valueOf(IP);
-	}
-	
-	public String setIP(String _tfIP) {
-		IP = _tfIP;
-		return IP;
-	}
-	
-	public void sendMessageByConsole() throws IOException {
-		do {
-			if (cliente != null) {
-				conectionStatus = true;
-			} else {
-				conectionStatus = false;
-			}
-		} while (conectionStatus == false);
-		
-			saida = new PrintStream(cliente.getOutputStream());
-			while (leitor.hasNextLine()) {
-				saida.println(leitor.nextLine());
-			}
-	}
-	
-	public void sendTextMessage(String _tfChat) throws IOException {
-		saida = new PrintStream(cliente.getOutputStream());
-		saida.println(_tfChat);
-	}
-	
 	public String receveTextMessage() throws IOException {
 		do {
 			System.out.println("Aguardando conexão...\n"); //REMOVER
@@ -86,21 +45,24 @@ public class FuncoesCliente extends Cliente{
 		return null;
 	}
 	
-	public void exit() throws IOException {
-		saida.close();
-		leitor.close();
-		leitorInput.close();
-		cliente.close();
-		System.exit(0);
+	public void sendTextMessage(String _tfChat) throws IOException {
+		saida = new PrintStream(cliente.getOutputStream());
+		saida.println(_tfChat);
 	}
-
-	public void waitConnection() {
-		do {
-			if (cliente != null) {
-				conectionStatus = true;
-			} else {
-				conectionStatus = false;
-			}
-		} while (conectionStatus == false);
+	
+	public String getIP() {
+		return String.valueOf(IP);
 	}
+	
+	public String setIP(String _tfIP) {
+		IP = _tfIP;
+		return IP;
+	}
+	
+	public void connect() throws UnknownHostException, IOException {
+		cliente = new Socket(IP, gateway);
+		System.out.println("Conectado ao servidor!");
+		JOptionPane.showMessageDialog(null, "Conectado com o servidor !");
+	}
+	
 }

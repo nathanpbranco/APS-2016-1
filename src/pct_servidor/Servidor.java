@@ -53,14 +53,8 @@ public class Servidor extends javax.swing.JFrame {
 				}
 			}
 		});
-		
-		/*Sessão do console*/
-		
-		/*Libera uma porta para que seja possivel uma conexão*/
 		funcao.openGateway();
 		
-		/*A partir daqui, o processo é enterrompido pelo método accept().
-		 * O programa está esperando um usuario se conectar*/
 		funcao.listenConnection();
 		
 		lblNotificacao.setText("Conectado com...");
@@ -69,9 +63,8 @@ public class Servidor extends javax.swing.JFrame {
 		tfChat.setEditable(true);
 		btnEnviar.setEnabled(true);
 		
-		funcao.enviarTeste();
+		funcao.errorFix();
 		
-		/*Mensagens do chat serão processadas abaixo*/
 		taChat.append("Mensagens aparecerão aqui...\n");
 		taChat.append("-------------------------------------------------------\n");
 		boolean infiniteLoop = true;
@@ -141,13 +134,7 @@ public class Servidor extends javax.swing.JFrame {
 
 		mntmSair.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				try {
-					funcao.exit();
-				} catch (IOException e) {
-					JOptionPane.showMessageDialog(null, "Ocorreu um erro ao finalizar a aplicação.\nForçando o encerramento agora...");
-					e.printStackTrace();
-					System.exit(0);
-				}
+				System.exit(0);
 			}
 		});
 		

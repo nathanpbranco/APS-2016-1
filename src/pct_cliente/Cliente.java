@@ -36,7 +36,7 @@ public class Cliente extends JFrame {
 	static JButton btnEnviar;
 	static JLabel lblIP ;
 	static JButton btnConectar;
-	static JButton btnDesconectar;
+	static JMenuItem mntmSair;
 	
 	public static void main(String[] args) throws IOException {
 		EventQueue.invokeLater(new Runnable() {
@@ -68,7 +68,7 @@ public class Cliente extends JFrame {
 		mnArquivo = new JMenu("Arquivo");
 		menuBar.add(mnArquivo);
 		
-		JMenuItem mntmSair = new JMenuItem("Sair");
+		mntmSair = new JMenuItem("Sair");
 		mnArquivo.add(mntmSair);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -112,21 +112,6 @@ public class Cliente extends JFrame {
 		contentPane.add(btnConectar);
 		btnConectar.setEnabled(true);
 		
-		btnDesconectar = new JButton("Desconectar");
-		btnDesconectar.setBounds(10, 86, 122, 39);
-		contentPane.add(btnDesconectar);
-		btnDesconectar.setEnabled(false);
-		
-		mntmSair.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				try {
-					funcao.exit();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		
 		btnEnviar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				try {
@@ -159,7 +144,6 @@ public class Cliente extends JFrame {
 					System.exit(0);
 				}
 				lblStatus.setText("Status: Conectado");
-				btnDesconectar.setEnabled(true);
 				btnConectar.setEnabled(false);
 				btnEnviar.setEnabled(true);
 				tfIP.setEnabled(false);
@@ -167,20 +151,9 @@ public class Cliente extends JFrame {
 			}
 		});
 		
-		btnDesconectar.addActionListener(new ActionListener() {
+		mntmSair.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				try {
-					funcao.desconnect();
-				} catch (IOException e) {
-					e.printStackTrace();
-					JOptionPane.showMessageDialog(null, "Um erro ocorreu ao se desconectar.\nEncerrando a aplicação.");
-					System.exit(0);
-				}
-				btnDesconectar.setEnabled(false);
-				btnConectar.setEnabled(true);
-				btnEnviar.setEnabled(false);
-				lblStatus.setText("Status: Desconectado");
-				tfIP.setEnabled(true);
+				System.exit(0);
 			}
 		});
 	}

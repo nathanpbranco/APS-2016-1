@@ -47,6 +47,12 @@ public class FuncoesServidor extends Servidor {
 		ip = cliente.getInetAddress().getHostAddress();
 		return ip;
 	}
+	
+	public void errorFix() throws IOException { //Criei esse metodo para solucionar um problema que estava fazendo com que a primeira mensagem enviada do servidor para o cliente não aparecesse.
+		saida = new PrintStream(cliente.getOutputStream());
+		String errorFix = "errorFix";
+		saida.println(errorFix);	
+	}
 
 	public void sendTextMessage(String _tfChat) throws IOException {
 		saida = new PrintStream(cliente.getOutputStream());
@@ -64,16 +70,5 @@ public class FuncoesServidor extends Servidor {
 		return null;
 	}
 
-	public void exit() throws IOException {
-		leitorInput.close();
-		servidor.close();
-		cliente.close();
-		System.exit(0);
-	}
 
-	public void enviarTeste() throws IOException {
-		saida = new PrintStream(cliente.getOutputStream());
-		String test = "Conectado.";
-		saida.println(test);	
-	}
 }
