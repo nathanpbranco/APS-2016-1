@@ -10,7 +10,6 @@ import javax.swing.JTextArea;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 
 import java.awt.event.ActionListener;
 import java.io.IOException;
